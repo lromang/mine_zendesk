@@ -1,9 +1,9 @@
 #! /usr/bin/Rscript
 
-library(dplyr)
 library(plyr)
 library(stringr)
 library(tidyr)
+library(dplyr)
 
 ##############################
 ## Read in data
@@ -11,6 +11,7 @@ library(tidyr)
 usr <- readLines("users.txt")
 sat <- readLines("satisfaction_ratings.txt")
 org <- readLines("organizations.txt")
+tic <- readLines("tickets.txt")
 
 ##############################
 ## structure user
@@ -90,6 +91,67 @@ org_name <- org[str_detect(org, "org_name:")] %>%
 
 data_org <- data.frame(id_org = id_org,
                       org_name = org_name)
+
+##############################
+## structure ticket
+##############################
+## Id
+tic_id <- tic[str_detect(tic, " id:")] %>%
+    lapply(function(t)t <- str_split(t, ":")[[1]][2]) %>%
+    unlist() %>% str_replace(",","") %>% str_trim()
+
+## Organization
+tic_dep <- tic[str_detect(tic, "organization:")] %>%
+    lapply(function(t)t <- str_split(t, ":")[[1]][2]) %>%
+    unlist() %>% str_replace(",","") %>% str_trim()
+
+## Requester
+tic_request <- tic[str_detect(tic, "requester:")] %>%
+    lapply(function(t)t <- str_split(t, ":")[[1]][2]) %>%
+    unlist() %>% str_replace(",","") %>% str_trim()
+
+## Date
+tic_date <- tic[str_detect(tic, " date: ")] %>%
+    lapply(function(t)t <- str_split(t, ":")[[1]][2]) %>%
+    unlist() %>% str_replace(",","") %>% str_trim() %>% as.Date()
+
+## Subject
+tic_sub <- tic[str_detect(tic, "subject:")] %>%
+    lapply(function(t)t <- str_split(t, ":")[[1]][2]) %>%
+    unlist() %>% str_replace(",","") %>% str_trim()
+
+## Message
+tic_des <- tic[str_detect(tic, "description:")] %>%
+    lapply(function(t)t <- str_split(t, ":")[[1]][2]) %>%
+    unlist() %>% str_replace(",","") %>% str_trim()
+
+## Tag
+tic_tag <- tic[str_detect(tic, "tags:")] %>%
+    lapply(function(t)t <- str_split(t, ":")[[1]][2]) %>%
+    unlist() %>% str_replace(",","") %>% str_trim()
+
+## Stat
+tic_stat <- tic[str_detect(tic, " status: ")] %>%
+    lapply(function(t)t <- str_split(t, ":")[[1]][2]) %>%
+    unlist() %>% str_replace(",","") %>% str_trim()
+
+
+## is disqus
+## is_disq <- str_detect(tic_tag, "disqus")
+
+tic_data <- data.frame(id         = tic_id,
+                      stat       = tic_stat,
+                      id_org     = tic_dep,
+                      requester  = tic_request,
+                      date       = tic_date,
+                      subject    = tic_sub,
+                      descript   = tic_des,
+                      tag        = tic_tag)
+
+## merge results disqus
+## usr_org <- merge(data_org, data_usr, by = "id_org")
+tic_org <- merge(data_org, tic_data,  by = "id_org")
+write.csv(tic_org, "tic.csv", row.names = FALSE)
 
 ##############################
 ## putting all together

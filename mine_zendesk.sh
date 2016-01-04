@@ -36,6 +36,18 @@ do
     fi    
 done
 
+##############################
+########### tickets ##########
+##############################
+for i in $(seq $1)
+do
+    lines=$(curl -Ls "https://mxabierto.zendesk.com/api/v2/tickets.json?page=$i"  -v -u luis.roangarci@gmail.com:Ikidefenix131090 | jq '.["tickets"]' | wc -l)
+    if [ $lines -gt 1 ]
+    then
+curl -Ls "https://mxabierto.zendesk.com/api/v2/tickets.json?page=$i"  -v -u luis.roangarci@gmail.com:Ikidefenix131090 | jq '.["tickets"][] |  {id: .["id"], requester:.["requester_id"], organization: .["organization_id"], subject: .["subject"], description: .["description"], date: .["created_at"], url: .["url"], status: .["status"], tags: .["tags"][1]}'| sed -e 's/{//g' -e 's/}//g' -e 's/"//g'| grep -vE '^$' >> tickets.txt
+    fi    
+done
+
 
 
 
