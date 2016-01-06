@@ -84,12 +84,18 @@ id_org <- org[str_detect(org, "id:")] %>%
     lapply(function(t)t <- str_split(t, ":")[[1]][2]) %>%
     unlist() %>% str_replace(",","") %>% str_trim()
 
+## id_org
+org_s_name <- org[str_detect(org, " name:")] %>%
+    lapply(function(t)t <- str_split(t, ":")[[1]][2]) %>%
+    unlist() %>% str_replace(",","") %>% str_trim()
+
 ## org_name
 org_name <- org[str_detect(org, "org_name:")] %>%
     lapply(function(t)t <- str_split(t, ":")[[1]][2]) %>%
     unlist() %>% str_replace(",","") %>% str_trim()
 
 data_org <- data.frame(id_org = id_org,
+                      org_s_name = org_s_name,
                       org_name = org_name)
 
 ##############################

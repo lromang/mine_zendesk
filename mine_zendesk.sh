@@ -1,5 +1,8 @@
 #! /bin/bash
 
+### Remove previous data
+rm users.txt satisfaction_ratings.txt organizations.txt tickets.txt
+
 ##############################
 ####### Organizations ########
 ##############################
@@ -8,7 +11,7 @@ do
     lines=$(curl -Ls "https://mxabierto.zendesk.com/api/v2/organizations.json?page=$i"  -v -u luis.roangarci@gmail.com:Ikidefenix131090 | jq '.["organizations"]' | wc -l)
     if [ $lines -gt 1 ]
        then
-           curl -Ls "https://mxabierto.zendesk.com/api/v2/organizations.json?page=$i"  -v -u luis.roangarci@gmail.com:Ikidefenix131090 | jq '.["organizations"][] | {id: .["id"], org_name: .["details"]}'  | sed -e 's/{//g' -e 's/}//g' -e 's/"//g'| grep -vE '^$' >> organizations.txt
+           curl -Ls "https://mxabierto.zendesk.com/api/v2/organizations.json?page=$i"  -v -u luis.roangarci@gmail.com:Ikidefenix131090 | jq '.["organizations"][] | {id: .["id"], name: .["name"], org_name: .["details"]}'  | sed -e 's/{//g' -e 's/}//g' -e 's/"//g'| grep -vE '^$' >> organizations.txt
     fi
 done
 
