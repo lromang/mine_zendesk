@@ -1,7 +1,7 @@
 #! /bin/bash
 
 ### Remove previous data
-rm users.txt satisfaction_ratings.txt organizations.txt tickets.txt
+##rm users.txt satisfaction_ratings.txt organizations.txt tickets.txt
 
 ##############################
 ####### Organizations ########
